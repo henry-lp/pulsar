@@ -57,11 +57,11 @@ public class Rate {
     }
 
     public void calculateRate(double period) {
-        checkArgument(period > 0, "Invalid period %s to calculate rate", period);
+        com.google.common.base.Preconditions.checkArgument(period > 0, "Invalid period %s to calculate rate", period);
 
         count = countAdder.sumThenReset();
         long sum = valueAdder.sumThenReset();
-        averageValue = count != 0 ? sum / count : 0.0d;
+        averageValue = (count != 0) ? (double) sum / count : 0.0d;
         rate = count / period;
         valueRate = sum / period;
     }

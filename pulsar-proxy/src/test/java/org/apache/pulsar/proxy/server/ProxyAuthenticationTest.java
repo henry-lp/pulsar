@@ -233,10 +233,10 @@ public class ProxyAuthenticationTest extends ProducerConsumerBase {
 		PulsarClient proxyClient = createPulsarClient(proxyServiceUrl, clientAuthParams, 1);
 		proxyClient.newProducer(Schema.BYTES).topic(topicName).create();
 		// Sleep for 4 seconds - wait for proxy auth params to expire
-		Thread.sleep(4 * 1000);
+		Thread.sleep((long) 4 * 1000);
 		proxyClient.newProducer(Schema.BYTES).topic(topicName).create();
 		// Sleep for 3 seconds - wait for client auth parans to expire
-		Thread.sleep(3 * 1000);
+		Thread.sleep((long) 3 * 1000);
 		proxyClient.newProducer(Schema.BYTES).topic(topicName).create();
 		proxyClient.close();
 		proxyService.close();

@@ -188,7 +188,7 @@ public class TGTRefreshThread extends Thread {
                             --retry;
                             // sleep for 10 seconds
                             try {
-                                Thread.sleep(10 * 1000);
+                                Thread.sleep((long) 10 * 1000);
                             } catch (InterruptedException ie) {
                                 Thread.currentThread().interrupt();
                                 log.error("Interrupted while renewing TGT, exiting Login thread");
@@ -214,7 +214,7 @@ public class TGTRefreshThread extends Thread {
                             --retry;
                             // sleep for 10 seconds.
                             try {
-                                Thread.sleep(10 * 1000);
+                                Thread.sleep((long) 10 * 1000);
                             } catch (InterruptedException e) {
                                 Thread.currentThread().interrupt();
                                 log.error("Interrupted during login retry after LoginException:", le);

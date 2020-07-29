@@ -605,7 +605,7 @@ public class PulsarConsumerSourceTests {
         final List<Message> messages = new ArrayList<>();
         for (int i = startIndex; i < (startIndex + numMessages); ++i) {
             String content = "message-" + i;
-            messages.add(createMessage(content, createMessageId(1, i + 1, 1)));
+            messages.add(org.apache.flink.streaming.connectors.pulsar.PulsarConsumerSourceTests.createMessage(content, org.apache.flink.streaming.connectors.pulsar.PulsarConsumerSourceTests.createMessageId(1, (long) i + 1, 1)));
         }
         return messages;
     }

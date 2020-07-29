@@ -338,7 +338,7 @@ public class PulsarConnectorConfig implements AutoCloseable {
 
     @Config("pulsar.managed-ledger-cache-size-MB")
     public PulsarConnectorConfig setManagedLedgerCacheSizeMB(int managedLedgerCacheSizeMB) {
-        this.managedLedgerCacheSizeMB = managedLedgerCacheSizeMB * 1024 * 1024;
+        this.managedLedgerCacheSizeMB = ((long) managedLedgerCacheSizeMB * 1024) * 1024;
         return this;
     }
 

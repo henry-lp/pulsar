@@ -178,7 +178,7 @@ public class BlockAwareSegmentInputStreamTest {
 
         @Override
         public long getLength() {
-            return (lac + 1) * entrySize;
+            return ((long) lac + 1) * entrySize;
         }
 
         @Override
