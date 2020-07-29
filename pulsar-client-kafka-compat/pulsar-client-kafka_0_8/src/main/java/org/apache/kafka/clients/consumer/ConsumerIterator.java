@@ -78,6 +78,9 @@ public class ConsumerIterator<K, V> implements Iterator<PulsarMessageAndMetadata
     @SuppressWarnings("unchecked")
     @Override
     public PulsarMessageAndMetadata<K, V> next() {
+		if (!hasNext()) {
+			throw new java.util.NoSuchElementException();
+		}
 
         Message<byte[]> msg = receivedMessages.poll();
         if (msg == null) {
