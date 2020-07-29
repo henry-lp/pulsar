@@ -353,7 +353,7 @@ public class ConcurrentLongHashMap<V> {
                             }
 
                             SIZE_UPDATER.decrementAndGet(this);
-                            V nextValueInArray = values[signSafeMod(bucket + 1, capacity)];
+                            V nextValueInArray = values[org.apache.pulsar.common.util.collections.ConcurrentLongHashMap.signSafeMod((long) bucket + 1, capacity)];
                             if (nextValueInArray == EmptyValue) {
                                 values[bucket] = (V) EmptyValue;
                                 --usedBuckets;
@@ -497,4 +497,4 @@ public class ConcurrentLongHashMap<V> {
     private static int alignToPowerOfTwo(int n) {
         return (int) Math.pow(2, 32 - Integer.numberOfLeadingZeros(n - 1));
     }
-}
+	}

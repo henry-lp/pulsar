@@ -290,7 +290,7 @@ public class WorkerConfig implements Serializable, PulsarConfiguration {
         category = CATEGORY_FUNC_METADATA_MNG,
         doc = "Frequency how often worker performs compaction on function-topics, in seconds"
     )
-    private long topicCompactionFrequencySec = 30 * 60; // 30 minutes
+    private long topicCompactionFrequencySec = (long) 30 * 60; // 30 minutes
     /***** --- TLS --- ****/
     @FieldContext(
         category = CATEGORY_WORKER_SECURITY,
@@ -306,8 +306,7 @@ public class WorkerConfig implements Serializable, PulsarConfiguration {
     @FieldContext(
         category = CATEGORY_WORKER_SECURITY,
         doc = "Path for the TLS private key file"
-    )
-    private String tlsKeyFilePath;
+    ) String tlsKeyFilePath;
     @FieldContext(
         category = CATEGORY_WORKER_SECURITY,
         doc = "Path for the trusted TLS certificate file"

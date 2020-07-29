@@ -362,7 +362,7 @@ public class ConcurrentOpenHashSet<V> {
         }
 
         private void cleanBucket(int bucket) {
-            int nextInArray = signSafeMod(bucket + 1, capacity);
+            int nextInArray = org.apache.pulsar.common.util.collections.ConcurrentOpenHashSet.signSafeMod((long) bucket + 1, capacity);
             if (values[nextInArray] == EmptyValue) {
                 values[bucket] = (V) EmptyValue;
                 --usedBuckets;

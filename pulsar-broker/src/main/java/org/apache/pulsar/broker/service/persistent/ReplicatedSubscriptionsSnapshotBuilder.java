@@ -127,7 +127,7 @@ public class ReplicatedSubscriptionsSnapshotBuilder {
                         p.getLedgerId(), p.getEntryId(), responses));
         controller.snapshotCompleted(snapshotId);
 
-        double latencyMillis = clock.millis() - startTimeMillis;
+        double latencyMillis = (double) clock.millis() - startTimeMillis;
         snapshotMetric.observe(latencyMillis);
     }
 
