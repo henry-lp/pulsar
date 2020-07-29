@@ -143,33 +143,27 @@ public class BlobStoreBackedInputStreamTest extends BlobStoreTestBase {
     public void testSeek() throws Exception {
         String objectKey = "testSeek";
         int objectSize = 12345;
-        RandomInputStream toWrite = new RandomInputStream(0, objectSize);
-
-        Map<Integer, InputStream> seeks = new HashMap<>();
-        Random r = new Random(12345);
-        for (int i = 0; i < 20; i++) {
-            int seek = r.nextInt(objectSize+1);
-            RandomInputStream stream = new RandomInputStream(0, objectSize);
-            stream.skip(seek);
-            seeks.put(seek, stream);
-        }
-
-        Payload payload = Payloads.newInputStreamPayload(toWrite);
-        payload.getContentMetadata().setContentLength((long)objectSize);
-        Blob blob = blobStore.blobBuilder(objectKey)
-            .payload(payload)
-            .contentLength((long)objectSize)
-            .build();
-        String ret = blobStore.putBlob(BUCKET, blob);
-        log.debug("put blob: {} in Bucket: {}, in blobStore, result: {}", objectKey, BUCKET, ret);
-
-        BackedInputStream toTest = new BlobStoreBackedInputStreamImpl(blobStore, BUCKET, objectKey,
-                                                                 (key, md) -> {},
-                                                                 objectSize, 1000);
-        for (Map.Entry<Integer, InputStream> e : seeks.entrySet()) {
-            toTest.seek(e.getKey());
-            assertStreamsMatch(toTest, e.getValue());
-        }
+		try (org.apache.bookkeeper.mledger.offload.jcloud.BlobStoreBackedInputStreamTest.RandomInputStream toWrite = new org.apache.bookkeeper.mledger.offload.jcloud.BlobStoreBackedInputStreamTest.RandomInputStream(0, objectSize)) {
+			java.util.Map<java.lang.Integer, java.io.InputStream> seeks = new java.util.HashMap<>();
+			java.util.Random r = new java.util.Random(12345);
+			for (int i = 0; i < 20; i++) {
+				int seek = r.nextInt(objectSize + 1);
+				org.apache.bookkeeper.mledger.offload.jcloud.BlobStoreBackedInputStreamTest.RandomInputStream stream = new org.apache.bookkeeper.mledger.offload.jcloud.BlobStoreBackedInputStreamTest.RandomInputStream(0, objectSize);
+				stream.skip(seek);
+				seeks.put(seek, stream);
+			}
+			org.jclouds.io.Payload payload = org.jclouds.io.Payloads.newInputStreamPayload(toWrite);
+			payload.getContentMetadata().setContentLength(((long) (objectSize)));
+			org.jclouds.blobstore.domain.Blob blob = blobStore.blobBuilder(objectKey).payload(payload).contentLength(((long) (objectSize))).build();
+			java.lang.String ret = blobStore.putBlob(org.apache.bookkeeper.mledger.offload.jcloud.BlobStoreTestBase.BUCKET, blob);
+			log.debug("put blob: {} in Bucket: {}, in blobStore, result: {}", objectKey, org.apache.bookkeeper.mledger.offload.jcloud.BlobStoreTestBase.BUCKET, ret);
+			org.apache.bookkeeper.mledger.offload.jcloud.BackedInputStream toTest = new org.apache.bookkeeper.mledger.offload.jcloud.impl.BlobStoreBackedInputStreamImpl(blobStore, org.apache.bookkeeper.mledger.offload.jcloud.BlobStoreTestBase.BUCKET, objectKey, ( key, md) -> {
+			}, objectSize, 1000);
+			for (java.util.Map.Entry<java.lang.Integer, java.io.InputStream> e : seeks.entrySet()) {
+				toTest.seek(e.getKey());
+				assertStreamsMatch(toTest, e.getValue());
+			}
+		}
     }
 
     @Test
@@ -193,33 +187,29 @@ public class BlobStoreBackedInputStreamTest extends BlobStoreTestBase {
         BackedInputStream toTest = new BlobStoreBackedInputStreamImpl(spiedBlobStore, BUCKET, objectKey,
                                                                  (key, md) -> {},
                                                                  objectSize, 1000);
-
-        // seek forward
-        RandomInputStream firstSeek = new RandomInputStream(0, objectSize);
-        toTest.seek(100);
-        firstSeek.skip(100);
-        for (int i = 0; i < 100; i++) {
-            Assert.assertEquals(firstSeek.read(), toTest.read());
-        }
-
-        // seek forward a bit more, but in same block
-        RandomInputStream secondSeek = new RandomInputStream(0, objectSize);
-        toTest.seek(600);
-        secondSeek.skip(600);
-        for (int i = 0; i < 100; i++) {
-            Assert.assertEquals(secondSeek.read(), toTest.read());
-        }
-
-        // seek back
-        RandomInputStream thirdSeek = new RandomInputStream(0, objectSize);
-        toTest.seek(200);
-        thirdSeek.skip(200);
-        for (int i = 0; i < 100; i++) {
-            Assert.assertEquals(thirdSeek.read(), toTest.read());
-        }
-
-        verify(spiedBlobStore, times(1))
-            .getBlob(Mockito.eq(BUCKET), Mockito.eq(objectKey), any());
+		try (// seek forward
+		org.apache.bookkeeper.mledger.offload.jcloud.BlobStoreBackedInputStreamTest.RandomInputStream firstSeek = new org.apache.bookkeeper.mledger.offload.jcloud.BlobStoreBackedInputStreamTest.RandomInputStream(0, objectSize)) {
+			toTest.seek(100);
+			firstSeek.skip(100);
+			for (int i = 0; i < 100; i++) {
+				org.testng.Assert.assertEquals(firstSeek.read(), toTest.read());
+			}
+			// seek forward a bit more, but in same block
+			org.apache.bookkeeper.mledger.offload.jcloud.BlobStoreBackedInputStreamTest.RandomInputStream secondSeek = new org.apache.bookkeeper.mledger.offload.jcloud.BlobStoreBackedInputStreamTest.RandomInputStream(0, objectSize);
+			toTest.seek(600);
+			secondSeek.skip(600);
+			for (int i = 0; i < 100; i++) {
+				org.testng.Assert.assertEquals(secondSeek.read(), toTest.read());
+			}
+			// seek back
+			org.apache.bookkeeper.mledger.offload.jcloud.BlobStoreBackedInputStreamTest.RandomInputStream thirdSeek = new org.apache.bookkeeper.mledger.offload.jcloud.BlobStoreBackedInputStreamTest.RandomInputStream(0, objectSize);
+			toTest.seek(200);
+			thirdSeek.skip(200);
+			for (int i = 0; i < 100; i++) {
+				org.testng.Assert.assertEquals(thirdSeek.read(), toTest.read());
+			}
+			Mockito.verify(spiedBlobStore, Mockito.times(1)).getBlob(org.mockito.Mockito.eq(org.apache.bookkeeper.mledger.offload.jcloud.BlobStoreTestBase.BUCKET), org.mockito.Mockito.eq(objectKey), ArgumentMatchers.any());
+		}
     }
 
     @Test
@@ -254,10 +244,10 @@ public class BlobStoreBackedInputStreamTest extends BlobStoreTestBase {
         }
 
         long after = middle + objectSize/4;
-        RandomInputStream toCompare = new RandomInputStream(0, objectSize);
-        toCompare.skip(after);
-
-        toTest.seekForward(after);
-        assertStreamsMatch(toTest, toCompare);
+		try (org.apache.bookkeeper.mledger.offload.jcloud.BlobStoreBackedInputStreamTest.RandomInputStream toCompare = new org.apache.bookkeeper.mledger.offload.jcloud.BlobStoreBackedInputStreamTest.RandomInputStream(0, objectSize)) {
+			toCompare.skip(after);
+			toTest.seekForward(after);
+			assertStreamsMatch(toTest, toCompare);
+		}
     }
 }

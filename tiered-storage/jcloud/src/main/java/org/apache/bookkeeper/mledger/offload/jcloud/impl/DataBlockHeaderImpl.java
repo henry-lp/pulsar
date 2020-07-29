@@ -56,21 +56,20 @@ public class DataBlockHeaderImpl implements DataBlockHeader {
     // Construct DataBlockHeader from InputStream, which contains `HEADER_MAX_SIZE` bytes readable.
     public static DataBlockHeader fromStream(InputStream stream) throws IOException {
         CountingInputStream countingStream = new CountingInputStream(stream);
-        DataInputStream dis = new DataInputStream(countingStream);
-        int magic = dis.readInt();
-        if (magic != MAGIC_WORD) {
-            throw new IOException("Data block header magic word not match. read: " + magic + " expected: " + MAGIC_WORD);
-        }
-
-        long headerLen = dis.readLong();
-        long blockLen = dis.readLong();
-        long firstEntryId = dis.readLong();
-        long toSkip = headerLen - countingStream.getCount();
-        if (dis.skip(toSkip) != toSkip) {
-            throw new EOFException("Header was too small");
-        }
-
-        return new DataBlockHeaderImpl(headerLen, blockLen, firstEntryId);
+		try (java.io.DataInputStream dis = new java.io.DataInputStream(countingStream)) {
+			int magic = dis.readInt();
+			if (magic != org.apache.bookkeeper.mledger.offload.jcloud.impl.DataBlockHeaderImpl.MAGIC_WORD) {
+				throw new java.io.IOException((("Data block header magic word not match. read: " + magic) + " expected: ") + org.apache.bookkeeper.mledger.offload.jcloud.impl.DataBlockHeaderImpl.MAGIC_WORD);
+			}
+			long headerLen = dis.readLong();
+			long blockLen = dis.readLong();
+			long firstEntryId = dis.readLong();
+			long toSkip = headerLen - countingStream.getCount();
+			if (dis.skip(toSkip) != toSkip) {
+				throw new java.io.EOFException("Header was too small");
+			}
+			return new org.apache.bookkeeper.mledger.offload.jcloud.impl.DataBlockHeaderImpl(headerLen, blockLen, firstEntryId);
+		}
     }
 
     private final long headerLength;
