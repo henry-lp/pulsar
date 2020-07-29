@@ -46,19 +46,17 @@ public class RabbitMQBrokerManager {
         Path homeFolder = Files.createTempDirectory("qpidHome");
         File etc = new File(homeFolder.toFile(), "etc");
         etc.mkdir();
-        FileOutputStream fos = new FileOutputStream(new File(etc, "passwd"));
-        fos.write("guest:guest\n".getBytes());
-        fos.close();
-
-        BrokerOptions brokerOptions = new BrokerOptions();
-
-        brokerOptions.setConfigProperty("qpid.work_dir", tmpFolder.toAbsolutePath().toString());
-        brokerOptions.setConfigProperty("qpid.amqp_port", PORT);
-        brokerOptions.setConfigProperty("qpid.home_dir", homeFolder.toAbsolutePath().toString());
-        String configPath = getFile("qpid.json").getAbsolutePath();
-        brokerOptions.setInitialConfigurationLocation(configPath);
-
-        return brokerOptions;
+		try (java.io.FileOutputStream fos = new java.io.FileOutputStream(new java.io.File(etc, "passwd"))) {
+			fos.write("guest:guest\n".getBytes());
+			fos.close();
+			org.apache.qpid.server.BrokerOptions brokerOptions = new org.apache.qpid.server.BrokerOptions();
+			brokerOptions.setConfigProperty("qpid.work_dir", tmpFolder.toAbsolutePath().toString());
+			brokerOptions.setConfigProperty("qpid.amqp_port", PORT);
+			brokerOptions.setConfigProperty("qpid.home_dir", homeFolder.toAbsolutePath().toString());
+			java.lang.String configPath = getFile("qpid.json").getAbsolutePath();
+			brokerOptions.setInitialConfigurationLocation(configPath);
+			return brokerOptions;
+		}
     }
 
     private File getFile(String name) {

@@ -51,16 +51,17 @@ public class AuthenticationProviderBasic implements AuthenticationProvider {
         } else if (!confFile.isFile()) {
             throw new IOException("The path is not a file");
         }
-
-        @Cleanup BufferedReader reader = new BufferedReader(new FileReader(confFile));
-        users = new HashMap<>();
-        for (String line : reader.lines().toArray(s -> new String[s])) {
-            List<String> splitLine = Arrays.asList(line.split(":"));
-            if (splitLine.size() != 2) {
-                throw new IOException("The format of the password auth conf file is invalid");
-            }
-            users.put(splitLine.get(0), splitLine.get(1));
-        }
+		try (@lombok.Cleanup
+		java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader(confFile))) {
+			users = new java.util.HashMap<>();
+			for (java.lang.String line : reader.lines().toArray((int s) -> new java.lang.String[s])) {
+				java.util.List<java.lang.String> splitLine = java.util.Arrays.asList(line.split(":"));
+				if (splitLine.size() != 2) {
+					throw new java.io.IOException("The format of the password auth conf file is invalid");
+				}
+				users.put(splitLine.get(0), splitLine.get(1));
+			}
+		}
     }
 
     @Override

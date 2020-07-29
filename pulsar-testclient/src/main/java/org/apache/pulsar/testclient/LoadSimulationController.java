@@ -630,65 +630,63 @@ public class LoadSimulationController {
         if (args.length > 0 && !(args.length == 1 && args[0].isEmpty())) {
             final ShellArguments arguments = new ShellArguments();
             final JCommander jc = new JCommander(arguments);
-            try {
-                jc.parse(args);
-                final String command = arguments.commandArguments.get(0);
-                switch (command) {
-                case "trade":
-                    handleTrade(arguments);
-                    break;
-                case "change":
-                    handleChange(arguments);
-                    break;
-                case "stop":
-                    handleStop(arguments);
-                    break;
-                case "trade_group":
-                    handleGroupTrade(arguments);
-                    break;
-                case "change_group":
-                    handleGroupChange(arguments);
-                    break;
-                case "stop_group":
-                    handleGroupStop(arguments);
-                    break;
-                case "script":
-                    // Read input from the given script instead of stdin until
-                    // the script has executed completely.
-                    final List<String> commandArguments = arguments.commandArguments;
-                    checkAppArgs(commandArguments.size() - 1, 1);
-                    final String scriptName = commandArguments.get(1);
-                    final BufferedReader scriptReader = new BufferedReader(
-                            new InputStreamReader(new FileInputStream(Paths.get(scriptName).toFile())));
-                    String line = scriptReader.readLine();
-                    while (line != null) {
-                        read(line.split("\\s+"));
-                        line = scriptReader.readLine();
-                    }
-                    scriptReader.close();
-                    break;
-                case "copy":
-                    handleCopy(arguments);
-                    break;
-                case "stream":
-                    handleStream(arguments);
-                    break;
-                case "simulate":
-                    handleSimulate(arguments);
-                    break;
-                case "quit":
-                case "exit":
-                    System.exit(0);
-                    break;
-                default:
-                    log.info("ERROR: Unknown command \"{}\"", command);
-                }
-            } catch (ParameterException ex) {
-                ex.printStackTrace();
-                jc.usage();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
+			try (final java.io.BufferedReader scriptReader = new java.io.BufferedReader(new java.io.InputStreamReader(new java.io.FileInputStream(java.nio.file.Paths.get(scriptName).toFile())))) {
+				jc.parse(args);
+				final java.lang.String command = arguments.commandArguments.get(0);
+				switch (command) {
+					case "trade" :
+						handleTrade(arguments);
+						break;
+					case "change" :
+						handleChange(arguments);
+						break;
+					case "stop" :
+						handleStop(arguments);
+						break;
+					case "trade_group" :
+						handleGroupTrade(arguments);
+						break;
+					case "change_group" :
+						handleGroupChange(arguments);
+						break;
+					case "stop_group" :
+						handleGroupStop(arguments);
+						break;
+					case "script" :
+						// Read input from the given script instead of stdin until
+						// the script has executed completely.
+						final java.util.List<java.lang.String> commandArguments = arguments.commandArguments;
+						checkAppArgs(commandArguments.size() - 1, 1);
+						final java.lang.String scriptName = commandArguments.get(1);
+						java.lang.String line = scriptReader.readLine();
+						while (line != null) {
+							read(line.split("\\s+"));
+							line = scriptReader.readLine();
+						} 
+						scriptReader.close();
+						break;
+					case "copy" :
+						handleCopy(arguments);
+						break;
+					case "stream" :
+						handleStream(arguments);
+						break;
+					case "simulate" :
+						handleSimulate(arguments);
+						break;
+					case "quit" :
+					case "exit" :
+						java.lang.System.exit(0);
+						break;
+					default :
+						org.apache.pulsar.testclient.LoadSimulationController.log.info("ERROR: Unknown command \"{}\"", command);
+				}
+			} catch (com.beust.jcommander.ParameterException ex) {
+				ex.printStackTrace();
+				jc.usage();
+			} catch (java.lang.Exception ex) {
+				ex.printStackTrace();
+			}
         }
     }
 

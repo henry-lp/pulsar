@@ -351,22 +351,22 @@ public class LoadSimulationClient {
      * Start listening for controller commands to create producers and consumers.
      */
     public void run() throws Exception {
-        final ServerSocket serverSocket = new ServerSocket(port);
-
-        while (true) {
-            // Technically, two controllers can be connected simultaneously, but
-            // non-sequential handling of commands
-            // has not been tested or considered and is not recommended.
-            log.info("Listening for controller command...");
-            final Socket socket = serverSocket.accept();
-            log.info("Connected to {}", socket.getInetAddress().getHostName());
-            executor.submit(() -> {
-                try {
-                    handle(socket);
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
-            });
-        }
+		try (final java.net.ServerSocket serverSocket = new java.net.ServerSocket(port)) {
+			while (true) {
+				// Technically, two controllers can be connected simultaneously, but
+				// non-sequential handling of commands
+				// has not been tested or considered and is not recommended.
+				org.apache.pulsar.testclient.LoadSimulationClient.log.info("Listening for controller command...");
+				final java.net.Socket socket = serverSocket.accept();
+				org.apache.pulsar.testclient.LoadSimulationClient.log.info("Connected to {}", socket.getInetAddress().getHostName());
+				executor.submit(() -> {
+					try {
+						handle(socket);
+					} catch (java.lang.Exception ex) {
+						throw new java.lang.RuntimeException(ex);
+					}
+				});
+			} 
+		}
     }
 }

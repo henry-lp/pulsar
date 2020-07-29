@@ -235,12 +235,10 @@ public class DiscoveryServiceWebTest extends BaseZKStarterTest{
         SSLContext sslCtx = SSLContext.getInstance("TLS");
         sslCtx.init(keyManagers, trustManagers, new SecureRandom());
         HttpsURLConnection.setDefaultSSLSocketFactory(sslCtx.getSocketFactory());
-        try {
-            InputStream response = new URL(requestUrl).openStream();
-            fail("it should give unknown host exception as: discovery service redirects request to: "
-                    + redirect_broker_host);
-        } catch (Exception e) {
-        }
+		try (java.io.InputStream response = new java.net.URL(requestUrl).openStream()) {
+			Assert.fail("it should give unknown host exception as: discovery service redirects request to: " + redirect_broker_host);
+		} catch (java.lang.Exception e) {
+		}
 
         server.stop();
     }

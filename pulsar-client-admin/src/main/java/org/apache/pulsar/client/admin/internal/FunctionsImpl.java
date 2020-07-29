@@ -812,76 +812,63 @@ public class FunctionsImpl extends ComponentResource implements Functions {
 
     private CompletableFuture<Void> downloadFileAsync(String destinationPath, WebTarget target) {
         final CompletableFuture<Void> future = new CompletableFuture<>();
-        try {
-            File file = new File(destinationPath);
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            FileChannel os = new FileOutputStream(new File(destinationPath)).getChannel();
+		try (java.nio.channels.FileChannel os = new java.io.FileOutputStream(new java.io.File(destinationPath)).getChannel()) {
+			java.io.File file = new java.io.File(destinationPath);
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			org.asynchttpclient.RequestBuilder builder = Dsl.get(target.getUri().toASCIIString());
+			java.util.concurrent.CompletableFuture<org.asynchttpclient.HttpResponseStatus> statusFuture = asyncHttpClient.executeRequest(addAuthHeaders(functions, builder).build(), new org.asynchttpclient.AsyncHandler<org.asynchttpclient.HttpResponseStatus>() {
+				private org.asynchttpclient.HttpResponseStatus status;
 
-            RequestBuilder builder = get(target.getUri().toASCIIString());
+				@java.lang.Override
+				public org.apache.pulsar.client.admin.internal.State onStatusReceived(org.asynchttpclient.HttpResponseStatus responseStatus) throws java.lang.Exception {
+					status = responseStatus;
+					if (status.getStatusCode() != javax.ws.rs.core.Response.Status.OK.getStatusCode()) {
+						return State.ABORT;
+					}
+					return State.CONTINUE;
+				}
 
-            CompletableFuture<HttpResponseStatus> statusFuture =
-                    asyncHttpClient.executeRequest(addAuthHeaders(functions, builder).build(),
-                        new AsyncHandler<HttpResponseStatus>() {
-                            private HttpResponseStatus status;
+				@java.lang.Override
+				public org.apache.pulsar.client.admin.internal.State onHeadersReceived(io.netty.handler.codec.http.HttpHeaders headers) throws java.lang.Exception {
+					return State.CONTINUE;
+				}
 
-                            @Override
-                            public State onStatusReceived(HttpResponseStatus responseStatus) throws Exception {
-                                status = responseStatus;
-                                if (status.getStatusCode() != Response.Status.OK.getStatusCode()) {
-                                    return State.ABORT;
-                                }
-                                return State.CONTINUE;
-                            }
+				@java.lang.Override
+				public org.apache.pulsar.client.admin.internal.State onBodyPartReceived(org.asynchttpclient.HttpResponseBodyPart bodyPart) throws java.lang.Exception {
+					os.write(bodyPart.getBodyByteBuffer());
+					return State.CONTINUE;
+				}
 
-                            @Override
-                            public State onHeadersReceived(HttpHeaders headers) throws Exception {
-                                return State.CONTINUE;
-                            }
+				@java.lang.Override
+				public org.asynchttpclient.HttpResponseStatus onCompleted() throws java.lang.Exception {
+					return status;
+				}
 
-                            @Override
-                            public State onBodyPartReceived(HttpResponseBodyPart bodyPart) throws Exception {
-                                os.write(bodyPart.getBodyByteBuffer());
-                                return State.CONTINUE;
-                            }
-
-                            @Override
-                            public HttpResponseStatus onCompleted() throws Exception {
-                                return status;
-                            }
-
-                            @Override
-                            public void onThrowable(Throwable t) {
-                            }
-                        }).toCompletableFuture();
-
-            statusFuture
-                    .thenAccept(status -> {
-                        try {
-                            os.close();
-                        } catch (Exception e) {
-                            future.completeExceptionally(getApiException(e));
-                            return;
-                        }
-
-                        if (status.getStatusCode() < 200 || status.getStatusCode() >= 300) {
-                            future.completeExceptionally(
-                                    getApiException(Response
-                                            .status(status.getStatusCode())
-                                            .entity(status.getStatusText())
-                                            .build()));
-                        } else {
-                            future.complete(null);
-                        }
-                    })
-                    .exceptionally(throwable -> {
-                        future.completeExceptionally(getApiException(throwable));
-                        return null;
-                    });
-        } catch (Exception e) {
-            future.completeExceptionally(getApiException(e));
-        }
+				@java.lang.Override
+				public void onThrowable(java.lang.Throwable t) {
+				}
+			}).toCompletableFuture();
+			statusFuture.thenAccept(( status) -> {
+				try {
+					os.close();
+				} catch ( e) {
+					future.completeExceptionally(getApiException(org.apache.pulsar.client.admin.internal.e));
+					return;
+				}
+				if ((status.getStatusCode() < 200) || (status.getStatusCode() >= 300)) {
+					future.completeExceptionally(getApiException(javax.ws.rs.core.Response.status(status.getStatusCode()).entity(status.getStatusText()).build()));
+				} else {
+					future.complete(null);
+				}
+			}).exceptionally(( throwable) -> {
+				future.completeExceptionally(getApiException(throwable));
+				return null;
+			});
+		} catch (java.lang.Exception e) {
+			future.completeExceptionally(getApiException(e));
+		}
         return future;
     }
 
