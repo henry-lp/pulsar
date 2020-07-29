@@ -73,6 +73,9 @@ public class PulsarByteBufferMessageSet extends kafka.javaapi.message.ByteBuffer
 
         @Override
         public PulsarMsgAndOffset next() {
+			if (!hasNext()) {
+				throw new java.util.NoSuchElementException();
+			}
 
             org.apache.pulsar.client.api.Message<byte[]> msg = receivedMessages.poll();
             if (msg == null) {
