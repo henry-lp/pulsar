@@ -3133,7 +3133,8 @@ public class SimpleProducerConsumerTest extends ProducerConsumerBase {
             }
         });
 
-        // validate even distribution among two consumers
+        
+		Assert.// validate even distribution among two consumers
         assertNotEquals(consumer1Count, noOfPartitions);
 
         consumer2.close();
@@ -3143,7 +3144,7 @@ public class SimpleProducerConsumerTest extends ProducerConsumerBase {
         Consumer<byte[]> consumer5 = consumerBuilder.consumerName("bbb4").priorityLevel(1).subscribe();
 
         Integer evenDistributionCount = noOfPartitions / 3;
-        retryStrategically((test) -> {
+        org.apache.pulsar.broker.auth.MockedPulsarServiceBaseTest.retryStrategically((test) -> {
             try {
                 Map<String, Integer> subsCount = Maps.newHashMap();
                 admin.topics().getPartitionedStats(topicName, true).partitions.forEach((p, stats) -> {
@@ -3151,9 +3152,9 @@ public class SimpleProducerConsumerTest extends ProducerConsumerBase {
                             .getValue().activeConsumerName;
                     subsCount.compute(activeConsumerName, (k, v) -> v != null ? v + 1 : 1);
                 });
-                return subsCount.size() == 3 && subsCount.get("bbb1") == evenDistributionCount
-                        && subsCount.get("bbb2") == evenDistributionCount
-                        && subsCount.get("bbb3") == evenDistributionCount;
+                return ((subsCount.size() == 3 && subsCount.get("bbb1").equals(evenDistributionCount)) 
+                        && subsCount.get("bbb2").equals(evenDistributionCount)) 
+                        && subsCount.get("bbb3").equals(evenDistributionCount) ;
 
             } catch (PulsarAdminException e) {
                 // Ok
@@ -3166,10 +3167,10 @@ public class SimpleProducerConsumerTest extends ProducerConsumerBase {
             String activeConsumerName = stats.subscriptions.entrySet().iterator().next().getValue().activeConsumerName;
             subsCount.compute(activeConsumerName, (k, v) -> v != null ? v + 1 : 1);
         });
-        assertEquals(subsCount.size(), 3);
-        assertEquals(subsCount.get("bbb1"), evenDistributionCount);
-        assertEquals(subsCount.get("bbb2"), evenDistributionCount);
-        assertEquals(subsCount.get("bbb3"), evenDistributionCount);
+        Assert.assertEquals(subsCount.size(), 3);
+        Assert.assertEquals(subsCount.get("bbb1"), evenDistributionCount);
+        Assert.assertEquals(subsCount.get("bbb2"), evenDistributionCount);
+        Assert.assertEquals(subsCount.get("bbb3"), evenDistributionCount);
 
         consumer1.close();
         consumer2.close();

@@ -122,7 +122,7 @@ public class StatsOutputStream extends SimpleTextOutputStream {
     private void checkSeparator() {
         if (separators.isEmpty()) {
             return;
-        } else if (separators.peek() == Boolean.TRUE) {
+        } else if (separators.peek().equals(java.lang.Boolean.TRUE)) {
             write(",");
         } else {
             separators.set(separators.size() - 1, Boolean.TRUE);
